@@ -6,13 +6,13 @@ const SignupPage = () => {
     const navigate = useNavigate();
     return (
         <div className="font-outfit flex flex-col gap-4 justify-center items-center p-4 min-h-screen">
-            <div className="w-full max-w-md p-8">
+            <div className="w-full max-w-md">
                 <h1 className="text-2xl font-bold text-primary mb-2">Create Your Account</h1>
                 <p className="text-gray-300 mb-4">Sign up to start learning today</p>
                 <form action="" className="flex flex-col gap-4">
-                    <input type="email" placeholder="Enter Your Name" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
-                    <input type="password" placeholder="Enter Your Email" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
-                    <input type="email" placeholder="Enter Password" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                    <input type="text" placeholder="Enter Your Name" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                    <input type="email" placeholder="Enter Your Email" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700  focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                    <input type="password" placeholder="Enter Password" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
                     <input type="password" placeholder="Confirm Password" className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500" />
                 </form>
                 
