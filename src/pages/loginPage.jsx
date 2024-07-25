@@ -18,8 +18,12 @@ const LoginPage = () => {
         username: email,
         password,
       });
-      navigate("/");
       toast.success("Login successful!", { autoClose: 3000 });
+      localStorage.setItem("token", res.data.access);
+      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("name", res.data.user.first_name);
+      navigate("/");
+      
     } catch (error) {
       console.error(error);
       setError("Login failed. Please check your credentials and try again.");

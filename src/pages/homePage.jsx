@@ -1,7 +1,110 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import emailjs from 'emailjs-com';
+import { toast } from "react-toastify";
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    emailjs.send(process.env.REACT_APP_SERVICE_ID, process.env.REACT_APP_TEMPLATE_ID, formData, process.env.REACT_APP_USER_ID)
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        toast.success("Message sent successfully!");
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
+        });
+      }, (error) => {
+        console.log('FAILED...', error);
+      });
+  };
+
+  return (
+    <div className="contact-section p-20 bg-white">
+      <div className="mb-10 text-center">
+        <h3 className="text-2xl font-bold text-gray-800">
+          Do you have any questions?
+        </h3>
+        <p className="text-lg text-gray-500">
+          Fill out the form below, our team will get back to you soon
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-10 rounded-lg shadow-md">
+        <div className="mb-6">
+          <input 
+            type="text" 
+            name="name" 
+            placeholder="Name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" 
+            required 
+          />
+        </div>
+        <div className="mb-6">
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your email" 
+            value={formData.email} 
+            onChange={handleChange} 
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" 
+            required 
+          />
+        </div>
+        <div className="mb-6">
+          <input 
+            type="tel" 
+            name="phone" 
+            placeholder="Phone Number" 
+            value={formData.phone} 
+            onChange={handleChange} 
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" 
+          />
+        </div>
+        <div className="mb-6">
+          <textarea 
+            name="message" 
+            placeholder="Your message" 
+            value={formData.message} 
+            onChange={handleChange} 
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary resize-none" 
+            rows="5" 
+            required 
+          ></textarea>
+        </div>
+        <button type="submit" className="w-full bg-primary text-white p-4 rounded-lg hover:bg-pink-600 focus:outline-none focus:bg-primary">
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+};
 
 const NavBar = () => {
+  const isLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('name');
+  return token && name;
+  }
+
   return (
     <>
       <div className="bg-primary text-white min-h-[10vh] text-f flex justify-between items-center px-20">
@@ -15,12 +118,15 @@ const NavBar = () => {
           </ul>
         </div>
         <div>
-          <Link
+          {isLoggedIn() ? <Link to='/login' onClick={() => {localStorage.clear(); window.location.reload() }}className="bg-white font-bold text-primary py-2 px-10 rounded-lg" >Sign Out</Link> : (
+            <Link
             to="/login"
             className="bg-white font-bold text-primary py-2 px-10 rounded-lg"
           >
             Sign In
           </Link>
+          )}
+          
         </div>
       </div>
     </>
@@ -90,7 +196,13 @@ const Card = ({ imgSrc, title, bgColor }) => {
   );
 };
 
+
 const HomePage = () => {
+  const isLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('name');
+  return token && name;
+  }
   return (
     <>
       <div className="min-h-screen font-outfit">
@@ -193,33 +305,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="contact-section p-20 bg-white">
-  <div className="mb-10 text-center">
-    <h3 className="text-2xl font-bold text-gray-800">
-      Do you have any questions?
-    </h3>
-    <p className="text-lg text-gray-500">
-      Fill out the form below, our team will get back to you soon
-    </p>
-  </div>
-  <form action="" className="max-w-2xl mx-auto p-10 rounded-lg shadow-md">
-    <div className="mb-6">
-      <input type="text" placeholder="Name" className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" />
-    </div>
-    <div className="mb-6">
-      <input type="email" placeholder="Enter your email" className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" />
-    </div>
-    <div className="mb-6">
-      <input type="tel" placeholder="Phone Number" className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" />
-    </div>
-    <div className="mb-6">
-      <textarea placeholder="Your message" className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-primary resize-none" rows="5"></textarea>
-    </div>
-    <button type="submit" className="w-full bg-primary text-white p-4 rounded-lg hover:bg-pink-600 focus:outline-none focus:bg-primary">
-      Submit
-    </button>
-  </form>
-</div>
+        <ContactForm/>
 
         <Footer />
       </div>
