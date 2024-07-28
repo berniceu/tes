@@ -79,7 +79,7 @@ export const EventsCalendar = () => {
                     <h2>Hey {session.user.email}</h2>
                         <div className="mb-4">
                         <p className="mb-4">Start of your event</p>
-                        <DateTimePicker onChange={setStart} value={start} className="w-full p-2 border rounded z-30"/>
+                        <DateTimePicker onChange={setStart} value={start} className="w-full p-2 border rounded z-30" calendarClassName= 'bg-white shadow-lg rounded-lg'/>
                         </div>
 
                         <div className="mb-4">

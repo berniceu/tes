@@ -38,7 +38,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="contact-section p-20 bg-white">
+    <div className="contact-section p-20 bg-white" id="contact">
       <div className="mb-10 text-center">
         <h3 className="text-2xl font-bold text-gray-800">
           Do you have any questions?
@@ -99,7 +99,7 @@ const ContactForm = () => {
   );
 };
 
-const NavBar = () => {
+export const NavBar = () => {
   const isLoggedIn = () => {
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('name');
@@ -112,10 +112,30 @@ const NavBar = () => {
         <div className="max-w-6">TechEmpower Sisters</div>
         <div>
           <ul className="flex gap-4">
-            <li>Home</li>
-            <li>Benefits</li>
-            <li>Courses</li>
-            <li>Contact</li>
+          <li>
+      <a href="#home" className="hover:cursor-pointer hover:text-gray-100">Home</a>
+    </li>
+    <li>
+      <a href="#benefits" className="hover:cursor-pointer hover:text-gray-100">Benefits</a>
+    </li>
+    <li>
+      <a href="#courses" className="hover:cursor-pointer hover:text-gray-100">Courses</a>
+    </li>
+    <li>
+      <a href="#contact" className="hover:cursor-pointer hover:text-gray-100">Contact</a>
+    </li>
+    {isLoggedIn && (
+      <>
+      <li>
+      <Link to='/events' className="hover:cursor-pointer hover:text-gray-100">Events</Link>
+    </li>
+    <li>
+      <Link to='/posts' className="hover:cursor-pointer hover:text-gray-100">Posts</Link>
+    </li>
+      </>
+      
+    
+    )}
           </ul>
         </div>
         <div>
@@ -134,7 +154,7 @@ const NavBar = () => {
   );
 };
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <footer className="bg-primary text-white py-10">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
@@ -208,7 +228,7 @@ const HomePage = () => {
     <>
       <div className="min-h-screen font-outfit">
         <NavBar />
-        <div className="first-section flex justify-between items-center px-20 py-20">
+        <div className="first-section flex justify-between items-center px-20 py-20" id="home">
           <div className="flex flex-col justify-center max-w-md">
             <h1 className="text-4xl font-bold  text-primary mb-4">
               Develop Your Skills In Tech Today
@@ -226,7 +246,7 @@ const HomePage = () => {
             />
           </div>
         </div>
-        <div className="second-section flex justify-between px-20 py-20">
+        <div className="second-section flex justify-between px-20 py-20" id="benefits">
           <div className="flex-shrink-0">
             <img
               src={`${process.env.PUBLIC_URL}/learning.jpg`}
@@ -276,7 +296,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="third-section p-20">
+        <div className="third-section p-20" id="courses">
           <div>
             <h1 className="text-2xl font-bold  text-primary pb-10">
               Browse Our Top Learning Courses
@@ -304,6 +324,15 @@ const HomePage = () => {
                 bgColor="bg-navy"
               />
             </div>
+
+            <div className="mt-20">
+              <Link
+                to="/courses"
+                className="bg-primary  text-white py-4 px-10 rounded-lg"
+              >
+                View All Courses
+              </Link>
+            </div>  
           </div>
         </div>
         <ContactForm/>

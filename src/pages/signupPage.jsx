@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import BASE_URL from "../config";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BASE_URL from "../config";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -21,21 +21,29 @@ const SignupPage = () => {
       toast.error("Passwords do not match");
       return;
     }
+
     try {
       const res = await axios.post(`${BASE_URL}/auth/register/`, {
         email,
         password,
         full_name: fullName,
       });
+
       toast.success("Signup successful");
       console.log(res.data);
       navigate("/login");
     } catch (error) {
       console.error(error);
-      setError("Signup failed. Please try again.");
-      toast.error("Signup failed. Please try again.");
+      if (error.response && error.response.status === 409) {
+        setError("An account with this email already exists.");
+        toast.error("An account with this email already exists.");
+      } else {
+        setError("Signup failed. Please try again.");
+        toast.error("Signup failed. Please try again.");
+      }
     }
   };
+
   return (
     <div className="font-outfit flex flex-col gap-4 justify-center items-center p-4 min-h-screen">
       <div className="w-full max-w-md">
@@ -43,7 +51,7 @@ const SignupPage = () => {
           Create Your Account
         </h1>
         <p className="text-gray-300 mb-4">Sign up to start learning today</p>
-        <form action="" className="flex flex-col gap-4">
+        <form action="" className="flex flex-col gap-4" onSubmit={handleSignup}>
           <input
             type="text"
             placeholder="Enter Your Name"
@@ -56,7 +64,7 @@ const SignupPage = () => {
             placeholder="Enter Your Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700  focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
           <input
             type="password"
@@ -68,31 +76,30 @@ const SignupPage = () => {
           <input
             type="password"
             placeholder="Confirm Password"
-            className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            className="px-4 py-4 rounded-lg bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
+          <button
+            type="submit"
+            className="bg-primary text-white font-bold flex justify-center px-4 py-3 rounded-lg hover:bg-pink-500"
+          >
+            Sign Up
+          </button>
         </form>
 
-        {error && <div className="error">{error}</div>}
+        {error && <div className="error text-red-500 mt-2">{error}</div>}
 
         <div className="mt-8 flex flex-col gap-4">
           <a
-            href=""
-            className="bg-primary text-white font-bold flex justify-center px-4 py-3 rounded-lg hover:bg-blue-600"
-            onClick={handleSignup}
-          >
-            Sign Up
-          </a>
-          <a
-            href=""
             onClick={() => navigate("/login")}
-            className="bg-primary bg-opacity-20 text-primary flex justify-center font-bold px-4 py-3 rounded-lg hover:bg-gray-600"
+            className="bg-primary bg-opacity-20 text-primary flex justify-center font-bold px-4 py-3 rounded-lg hover:bg-pink-200 cursor-pointer"
           >
             Log In
           </a>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 };
