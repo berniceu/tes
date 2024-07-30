@@ -117,7 +117,7 @@ export const NavBar = () => {
               Home
             </Link>
       </li>
-      {isLoggedIn ? (
+      {isLoggedIn() ? (
         <>
           <li>
             <Link to="/courses" className="hover:cursor-pointer hover:text-gray-100">
@@ -284,7 +284,7 @@ const HomePage = () => {
               className="rounded-lg shadow-lg"
             />
           </div>
-          <div className="flex flex-col justify-center max-w-lg">
+          <div className="flex flex-col justify-center max-w-lg" id="benefits">
             <h1 className="text-4xl font-bold  text-primary mb-6">
               Perks From Our E-learning Platform
             </h1>
@@ -326,7 +326,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="third-section p-20 flex flex-col gap-5 items-center mx-auto w-full max-w-[900px]">
+        <div className="third-section p-20 flex flex-col gap-5 items-center mx-auto w-full max-w-[900px]" id='about-us'>
         <h1 className="text-4xl font-bold  text-primary mb-6">
               About Us
             </h1>

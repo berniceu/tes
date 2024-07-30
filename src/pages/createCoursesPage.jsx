@@ -20,76 +20,98 @@ const CourseCard = ({ course }) => {
             <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
             <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"/>
           </svg>
-          {course.duration || '15 hours'}
+          {course.hours} hours
         </div>
         <div className="flex items-center">
           <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
             <path d="M12 6c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z"/>
           </svg>
-          {course.level || 'Intermediate'}
+          {course.level}
         </div>
       </div>
     </div>
   )
 }
 
-  const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
-    if(!isOpen) return null;
+const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
+  if(!isOpen) return null;
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg">
-              <h2 className="text-2xl font-bold mb-4">Add New Course</h2>
-              <form onSubmit={onSubmit}>
-                  <input
-                      className="w-full mb-2 p-2 border rounded"
-                      type="text"
-                      placeholder="Course Name"
-                      value={newCourse.name}
-                      onChange={(e) => setNewCourse({...newCourse, name: e.target.value})}
-                  />
-                  <textarea
-                      className="w-full mb-2 p-2 border rounded"
-                      placeholder="Course Description"
-                      value={newCourse.description}
-                      onChange={(e) => setNewCourse({...newCourse, description: e.target.value})}
-                  />
-                  <input
-                      className="w-full mb-2 p-2 border rounded"
-                      type="text"
-                      placeholder="Course Link"
-                      value={newCourse.link}
-                      onChange={(e) => setNewCourse({...newCourse, link: e.target.value})}
-                  />
-                  <div className="flex justify-end">
-                      <button type="button" onClick={onClose} className="mr-2 px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                      <button type="submit" className="px-4 py-2 bg-primary text-white rounded">Add Course</button>
-                  </div>
-              </form>
-          </div>
-      </div>
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Add New Course</h2>
+            <form onSubmit={onSubmit}>
+                <input
+                    className="w-full mb-2 p-2 border rounded"
+                    type="text"
+                    placeholder="Course Name"
+                    value={newCourse.name}
+                    onChange={(e) => setNewCourse({...newCourse, name: e.target.value})}
+                />
+                <textarea
+                    className="w-full mb-2 p-2 border rounded"
+                    placeholder="Course Description"
+                    value={newCourse.description}
+                    onChange={(e) => setNewCourse({...newCourse, description: e.target.value})}
+                />
+                <input
+                    className="w-full mb-2 p-2 border rounded"
+                    type="text"
+                    placeholder="Course Link"
+                    value={newCourse.source_link}
+                    onChange={(e) => setNewCourse({...newCourse, source_link: e.target.value})}
+                />
+                <select
+                    className="w-full mb-2 p-2 border rounded"
+                    value={newCourse.level}
+                    onChange={(e) => setNewCourse({...newCourse, level: e.target.value})}
+                >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+                <input
+                    className="w-full mb-2 p-2 border rounded"
+                    type="number"
+                    placeholder="Course Hours"
+                    value={newCourse.hours}
+                    onChange={(e) => setNewCourse({...newCourse, hours: parseInt(e.target.value)})}
+                />
+                <div className="flex justify-end">
+                    <button type="button" onClick={onClose} className="mr-2 px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                    <button type="submit" className="px-4 py-2 bg-primary text-white rounded">Add Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
   );
-  }
-
+}
   const CoursesGrid = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [newCourse, setNewCourse] = useState({ name: '', description: '', link: '' });
+    const [newCourse, setNewCourse] = useState({ name: '', description: '', source_link: '', level: 'beginner', hours: 0 });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const userRole = localStorage.getItem('role')
 
     useEffect(() => {
         const fetchCourses = async () => {
-            try {
-                const res = await axios.get(`${BASE_URL}/dashboard/courses/`);
-                setCourses(Array.isArray(res.data) ? res.data : []);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
+          try {
+            const res = await axios.get(`${BASE_URL}/dashboard/courses/`);
+            console.log('Fetched courses:', res.data);
+            if (res.data.courses && Array.isArray(res.data.courses)) {
+                setCourses(res.data.courses);
+            } else {
+                console.error('Unexpected data structure:', res.data);
+                setCourses([]);
             }
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+            setError(error.message);
+            setLoading(false);
+        }
         }
 
         fetchCourses()

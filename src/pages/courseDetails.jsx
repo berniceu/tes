@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import { NavBar } from "./homePage";
 import { Footer } from "./homePage";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import BASE_URL from "../config";
 
 const CourseDetails = () => {
+  const [course, setCourse] = useState(null);
+    const { id } = useParams();
+
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const response = await axios.get(`${BASE_URL}/dashboard/courses/${id}/`);
+                setCourse(response.data.course);
+            } catch (error) {
+                console.error('Error fetching course:', error);
+            }
+        };
+
+        fetchCourse();
+    }, [id]);
+
+    if (!course) return <div>Loading...</div>;
+
     return (
       <div className="max-w-6xl mx-auto p-6 mt-5 font-sans min-h-screen">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Name of the course</h1>
+          <h1 className="text-2xl font-bold">{course.name}</h1>
 
         </div>
         
@@ -14,31 +35,27 @@ const CourseDetails = () => {
           <div className="w-2/3">
             <h2 className="text-lg font-semibold mb-3">About the course</h2>
             <p className="text-gray-600 mb-6">
-              Lorem ipsum et simplemente al hecho de los impresos y archivos de
-              texto. Lorem ipsum ha sido el texto de relleno estándar de las industrias
-              desde el año 1500, cuando un impresor desconocido usó una galería de textos
-              y los mezcló de tal manera que logró hacer un libro de textos especimen.
+              {course.description}
             </p>
             
             <div className="flex gap-12 mb-6">
               <div>
-                <h3 className="font-semibold mb-2">Facts</h3>
+                <h3 className="font-semibold mb-2">More about the course</h3>
                 <ul className="space-y-1 text-sm text-gray-600">
-                  <li>Beginner Friendly</li>
-                  <li>4+ Hours</li>
-                  <li>17 Lessons</li>
-                  <li>10+ Exercises</li>
-                  <li>3 Projects Included</li>
+                  <li>Level: {course.level}</li>
+                  <li>Duration: {course.hours} hours</li>
+                  <li>lessons: {course.lessons}</li>
+                  <li>exercises: {course.exercises}</li>
+                  <li>projects: {course.projects}</li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Skills</h3>
                 <ul className="space-y-1 text-sm text-gray-600">
-                  <li>Communication Skills</li>
-                  <li>Design</li>
-                  <li>Language</li>
-                  <li>Teamwork</li>
-                </ul>
+                                {course.skills && course.skills.map((skill, index) => (
+                                    <li key={index}>{skill}</li>
+                                ))}
+                            </ul>
               </div>
             </div>
           </div>
