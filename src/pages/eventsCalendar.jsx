@@ -17,25 +17,30 @@ export const EventsCalendar = () => {
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext();
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
-
     const fetchEvents = async () => {
-        const { data, error } = await supabase
-            .from('events')
-            .select('*');
-        
-        if (error) {
-            console.error('Error fetching events:', error);
-        } else {
+        try {
+            const { data, error } = await supabase
+                .from('events')
+                .select('*');
+            
+            if (error) throw error;
+            
+            console.log('Fetched events:', data);
             setEvents(data.map(event => ({
                 ...event,
                 start: new Date(event.start_time),
                 end: new Date(event.end_time)
             })));
+        } catch (error) {
+            console.error('Error fetching events:', error);
         }
     };
+
+    useEffect(() => {
+        fetchEvents();
+    }, []);
+
+    
 
     const createEvent = async () => {
         const { data, error } = await supabase
