@@ -111,32 +111,50 @@ export const NavBar = () => {
       <div className="bg-primary text-white min-h-[10vh] text-f flex justify-between items-center px-20">
         <div className="max-w-6">TechEmpower Sisters</div>
         <div>
-          <ul className="flex gap-4">
-          <li>
-      <a href="#home" className="hover:cursor-pointer hover:text-gray-100">Home</a>
-    </li>
-    <li>
-      <a href="#benefits" className="hover:cursor-pointer hover:text-gray-100">Benefits</a>
-    </li>
-    <li>
-      <a href="#courses" className="hover:cursor-pointer hover:text-gray-100">Courses</a>
-    </li>
-    <li>
-      <a href="#contact" className="hover:cursor-pointer hover:text-gray-100">Contact</a>
-    </li>
-    {isLoggedIn && (
-      <>
+        <ul className="flex gap-4">
       <li>
-      <Link to='/events' className="hover:cursor-pointer hover:text-gray-100">Events</Link>
-    </li>
-    <li>
-      <Link to='/posts' className="hover:cursor-pointer hover:text-gray-100">Posts</Link>
-    </li>
-      </>
-      
-    
-    )}
-          </ul>
+      <Link to="/" className="hover:cursor-pointer hover:text-gray-100">
+              Home
+            </Link>
+      </li>
+      {isLoggedIn ? (
+        <>
+          <li>
+            <Link to="/courses" className="hover:cursor-pointer hover:text-gray-100">
+              Courses
+            </Link>
+          </li>
+          <li>
+            <Link to="/events" className="hover:cursor-pointer hover:text-gray-100">
+              Events
+            </Link>
+          </li>
+          <li>
+            <Link to="/posts" className="hover:cursor-pointer hover:text-gray-100">
+              Posts
+            </Link>
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <a href="#benefits" className="hover:cursor-pointer hover:text-gray-100">
+              Benefits
+            </a>
+          </li>
+          <li>
+            <a href="#about-us" className="hover:cursor-pointer hover:text-gray-100">
+              About Us
+            </a>
+          </li>
+          <li>
+            <a href="#contact" className="hover:cursor-pointer hover:text-gray-100">
+              Contact
+            </a>
+          </li>
+        </>
+      )}
+    </ul>
         </div>
         <div>
           {isLoggedIn() ? <Link to='/login' onClick={() => {localStorage.clear(); window.location.reload() }}className="bg-white font-bold text-primary py-2 px-10 rounded-lg" >Sign Out</Link> : (
@@ -155,9 +173,16 @@ export const NavBar = () => {
 };
 
 export const Footer = () => {
+
+  const isLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('name');
+  return token && name;
+  }
+
   return (
     <footer className="bg-primary text-white py-10">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-10">
         <div className="mb-6 md:mb-0">
           <h3 className="text-2xl font-bold max-w-64">
             TechEmpower Sisters E-learning Platform
@@ -169,31 +194,48 @@ export const Footer = () => {
         </div>
         <div className="flex justify-center md:justify-start">
           <ul className="text-lg ml-10">
-            <li>
-              <a href="#" className="hover:underline">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Benefits
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Courses
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Contact Us
-              </a>
-            </li>
+          <li>
+      <Link to="/" className="hover:cursor-pointer hover:text-gray-100">
+              Home
+            </Link>
+      </li>
+      {isLoggedIn ? (
+        <>
+          <li>
+            <Link to="/courses" className="hover:cursor-pointer hover:text-gray-100">
+              Courses
+            </Link>
+          </li>
+          <li>
+            <Link to="/events" className="hover:cursor-pointer hover:text-gray-100">
+              Events
+            </Link>
+          </li>
+          <li>
+            <Link to="/posts" className="hover:cursor-pointer hover:text-gray-100">
+              Posts
+            </Link>
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <a href="#benefits" className="hover:cursor-pointer hover:text-gray-100">
+              Benefits
+            </a>
+          </li>
+          <li>
+            <a href="#about-us" className="hover:cursor-pointer hover:text-gray-100">
+              About Us
+            </a>
+          </li>
+          <li>
+            <a href="#contact" className="hover:cursor-pointer hover:text-gray-100">
+              Contact
+            </a>
+          </li>
+        </>
+      )}
           </ul>
         </div>
       </div>
@@ -204,18 +246,6 @@ export const Footer = () => {
   );
 };
 
-const Card = ({ imgSrc, title, bgColor }) => {
-  return (
-    <div
-      className={`flex flex-col justify-between items-center ${bgColor} w-64 h-56 p-4 rounded-lg text-white`}
-    >
-      <div className="flex-grow flex justify-center items-center">
-        <img src={imgSrc} alt={title} className="w-20 h-20" />
-      </div>
-      <div className="text-lg font-semibold mt-4">{title}</div>
-    </div>
-  );
-};
 
 
 const HomePage = () => {
@@ -296,44 +326,13 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="third-section p-20" id="courses">
-          <div>
-            <h1 className="text-2xl font-bold  text-primary pb-10">
-              Browse Our Top Learning Courses
+        <div className="third-section p-20 flex flex-col gap-5 items-center mx-auto w-full max-w-[900px]">
+        <h1 className="text-4xl font-bold  text-primary mb-6">
+              About Us
             </h1>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card
-                imgSrc={`${process.env.PUBLIC_URL}/ux.svg`}
-                title="UI/UX Design"
-                bgColor="bg-brown"
-              />
-              <Card
-                imgSrc={`${process.env.PUBLIC_URL}/web-dev.svg`}
-                title="Web Development"
-                bgColor="bg-hotPink"
-              />
-              <Card
-                imgSrc={`${process.env.PUBLIC_URL}/digital-marketing.svg`}
-                title="Digital Marketing"
-                bgColor="bg-green"
-              />
-              <Card
-                imgSrc={`${process.env.PUBLIC_URL}/data-analytics.svg`}
-                title="Data Analytics"
-                bgColor="bg-navy"
-              />
-            </div>
-
-            <div className="mt-20">
-              <Link
-                to="/courses"
-                className="bg-primary  text-white py-4 px-10 rounded-lg"
-              >
-                View All Courses
-              </Link>
-            </div>  
-          </div>
+          <p className=" ">At TechEmpower Her, we envision a world where women have equal opportunities 
+            to thrive in tech careers. We aim to bridge the gender gap in the technology sector by 
+            fostering a supportive community and offering specialized courses that cater to the unique needs and challenges faced by women in tech.</p>
         </div>
         <ContactForm/>
 
