@@ -25,15 +25,33 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, updatePost }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [postDetails, setPostDetails] = useState(null);
   const [newComment, setNewComment] = useState('');
 
+  const fetchComments = async (postId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/dashboard/posts/${postId}/comments/`);
+      console.log('comments', response.data)
+      return response.data || [];
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      return [];
+    }
+  };
+
   const fetchPostDetails = async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}/dashboard/posts/${id}`);
-      setPostDetails(response.data.post);
+      const [postResponse, commentsResponse] = await Promise.all([
+        axios.get(`${BASE_URL}/dashboard/posts/${id}`),
+        fetchComments(id)
+      ]);
+      
+      setPostDetails({
+        ...postResponse.data.post,
+        comments: commentsResponse || []
+      });
     } catch (error) {
       console.error('Error fetching post details:', error);
     }
@@ -50,22 +68,24 @@ const PostCard = ({ post }) => {
     setNewComment('');
   };
 
-  const handleCommentSubmit = async (e) => {
+  const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    try {
-      const response = await axios.post(`${BASE_URL}/dashboard/posts/new_comment/`, {
-        content: newComment
-      });
-      setPostDetails({
-        ...postDetails,
-        comments: [...postDetails.comments, response.data]
-      });
-      setNewComment('');
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
+    const newCommentObj = {
+      id: Date.now(),
+      comment: newComment,
+      created_at: new Date().toISOString()
+    };
+
+    const updatedPost = {
+      ...postDetails,
+      comments: [...(postDetails.comments || []), newCommentObj]
+    };
+    setPostDetails(updatedPost);
+    updatePost(updatedPost);
+    setNewComment('');
+    toast.success('Comment added successfully!');
   };
 
   return (
@@ -111,11 +131,11 @@ const PostCard = ({ post }) => {
               </div>
             </div>
             <div className="mb-4">
-              <h3 className="text-lg font-bold mb-2">Comments</h3>
+              <h3 className="text-lg font-bold mb-2">Comments ({postDetails.comments ? postDetails.comments.length : 0})</h3>
               {postDetails.comments && postDetails.comments.length > 0 ? (
                 postDetails.comments.map((comment, index) => (
                   <div key={index} className="mb-2 p-2 bg-gray-100 rounded">
-                    <p>{comment.content}</p>
+                    <p>{comment.comment}</p>
                     <small className="text-gray-500">
                       {new Date(comment.created_at).toLocaleString()}
                     </small>
@@ -145,6 +165,7 @@ const PostCard = ({ post }) => {
     </>
   );
 };
+
 
 
 const PostModal = ({ isOpen, onClose, onSubmit, newPost, setNewPost }) => {
@@ -205,34 +226,37 @@ const PostsGrid = () => {
         setError(error.message);
         setLoading(false);
       }
-    
     }
 
     fetchPosts()
   }, [])
 
   const handleAddPost = async (e) => {
-  e.preventDefault();
-  if (!newPost.name || !newPost.content) {
-    toast.error('Name and content are required!');
-    return;
-  }
-  try {
-    const postData = {
-      name: newPost.name,
-      content: newPost.content,
-    };
-    const res = await axios.post(`${BASE_URL}/dashboard/posts/new_post/`, postData);
-    setPosts(prevPosts => Array.isArray(prevPosts) ? [...prevPosts, res.data] : [res.data]);
-    setNewPost({ name: '', content: '' });
-    setIsModalOpen(false);
-    toast.success('Post added successfully!')
-  } catch (error) {
-    console.error('Error adding post:', error.response ? error.response.data : error);
-    setError(error.message);
-    toast.error('Failed to add post!')
-  }
-};
+    e.preventDefault();
+    if (!newPost.name || !newPost.content) {
+      toast.error('Name and content are required!');
+      return;
+    }
+    try {
+      const postData = {
+        name: newPost.name,
+        content: newPost.content,
+      };
+      const res = await axios.post(`${BASE_URL}/dashboard/posts/new_post/`, postData);
+      setPosts(prevPosts => Array.isArray(prevPosts) ? [...prevPosts, res.data] : [res.data]);
+      setNewPost({ name: '', content: '' });
+      setIsModalOpen(false);
+      toast.success('Post added successfully!')
+    } catch (error) {
+      console.error('Error adding post:', error.response ? error.response.data : error);
+      setError(error.message);
+      toast.error('Failed to add post!')
+    }
+  };
+
+  const updatePost = (updatedPost) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === updatedPost.id ? updatedPost : post));
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -244,11 +268,10 @@ const PostsGrid = () => {
           <div>
             <button className="bg-primary text-white px-4 py-2 rounded-lg mr-2" onClick={() => setIsModalOpen(true)}>Add New Post</button>
           </div>
-
       </div>
       <div className="">
         {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} updatePost={updatePost} />
         ))}
       </div>
       <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleAddPost} newPost={newPost} setNewPost={setNewPost}/>

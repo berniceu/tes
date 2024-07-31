@@ -7,6 +7,8 @@ import BASE_URL from "../config";
 
 const CourseDetails = () => {
   const [course, setCourse] = useState(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
     const { id } = useParams();
 
     useEffect(() => {
@@ -22,7 +24,21 @@ const CourseDetails = () => {
         fetchCourse();
     }, [id]);
 
+    const handleEnrollClick = () => {
+      setShowConfirmModal(true);
+    };
+  
+    const handleConfirmEnroll = () => {
+      setIsEnrolled(true);
+      setShowConfirmModal(false);
+    };
+
+    const handleCancelEnroll = () => {
+      setShowConfirmModal(false);
+    };
+
     if (!course) return <div>Loading...</div>;
+
 
     return (
       <div className="max-w-6xl mx-auto p-6 mt-5 font-sans min-h-screen">
@@ -32,9 +48,9 @@ const CourseDetails = () => {
         </div>
         
         <div className="flex gap-8">
-          <div className="w-2/3">
+          <div className="">
             <h2 className="text-lg font-semibold mb-3">About the course</h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-6 w-2/3">
               {course.description}
             </p>
             
@@ -49,41 +65,73 @@ const CourseDetails = () => {
                   <li>projects: {course.projects}</li>
                 </ul>
               </div>
-              <div>
+              <div className="w-1/3 bg-gray-50 p-6 rounded-lg">
+            <h3 className="font-semibold mb-3">Your Progress</h3>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+              <div className=" h-2.5 rounded-full  "></div>
+              0%
+            </div>
+            
+            {isEnrolled ? (
+            <div className="mb-6">
+              <p className="text-green-600 font-semibold">You are enrolled in this course</p>
+              <button className="w-full bg-primary text-white py-2 rounded-full mt-2">
+                Start Learning
+              </button>
+            </div>
+          ) : (
+            <button
+              className="w-full bg-primary text-white py-2 rounded-full mb-6"
+              onClick={handleEnrollClick}
+            >
+              Enroll in Course
+            </button>
+          )}
+            
+          </div>
+              {/* <div>
                 <h3 className="font-semibold mb-2">Skills</h3>
-                {/* <ul className="space-y-1 text-sm text-gray-600">
-                                {course.skills && course.skills.map((skill, index) => (
-                                    <li key={index}>{skill}</li>
-                                ))}
-                            </ul> */}
-              </div>
+                <ul className="space-y-1 text-sm text-gray-600">
+  {Array.isArray(course.skills) && course.skills.length > 0 ? (
+    course.skills.map((skill, index) => (
+      <li key={index}>{skill}</li>
+    ))
+  ) : (
+    <li>No skills listed</li>
+  )}
+</ul>
+              </div> */}
             </div>
           </div>
           
-          <div className="w-1/3 bg-gray-50 p-6 rounded-lg">
-            <h3 className="font-semibold mb-3">Your Progress</h3>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-              <div className="bg-primary h-2.5 rounded-full w-1/3"></div>
+          
+        </div>
+        {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Confirm Enrollment</h2>
+            <p className="mb-4">Are you sure you want to enroll in this course?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="px-4 py-2 bg-gray-200 rounded"
+                onClick={handleCancelEnroll}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-primary text-white rounded"
+                onClick={handleConfirmEnroll}
+              >
+                Confirm
+              </button>
             </div>
-            
-            <button className="w-full bg-primary text-white py-2 rounded-full mb-6">
-              Start Learning
-            </button>
-            
-            <h4 className="font-semibold mb-3">Lessons</h4>
-            <ul className="space-y-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((lesson) => (
-                <li key={lesson} className="flex items-center text-sm text-gray-600">
-                  <span className="w-4 h-4 mr-2 rounded-full border border-pink-400 flex items-center justify-center">
-                    {lesson <= 2 && <span className="w-2 h-2 bg-pink-400 rounded-full"></span>}
-                  </span>
-                  Lesson {lesson}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
-      </div>
+      )}
+    </div>
+
+
+      
     );
   };
   
