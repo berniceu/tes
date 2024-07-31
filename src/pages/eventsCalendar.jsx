@@ -7,6 +7,40 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
+const EventDetails = ({ event, onClose }) => {
+    if (!event) return null;
+
+    return (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-10" id="my-modal">
+            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div className="mt-3 text-center">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">{event.title}</h3>
+                    <div className="mt-2 px-7 py-3">
+                        <p className="text-sm text-gray-500">
+                            {event.description}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-2">
+                            Start: {event.start.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            End: {event.end.toLocaleString()}
+                        </p>
+                    </div>
+                    <div className="items-center px-4 py-3">
+                        <button
+                            id="ok-btn"
+                            className="px-4 py-2 bg-primary text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            onClick={onClose}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const EventsCalendar = () => {
     const [events, setEvents] = useState([]);
     const [start, setStart] = useState(new Date());
@@ -16,6 +50,11 @@ export const EventsCalendar = () => {
     const session = useSession();
     const supabase = useSupabaseClient();
     const { isLoading } = useSessionContext();
+    const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const handleSelectEvent = (event) => {
+        setSelectedEvent(event);
+    };
 
     const fetchEvents = async () => {
         try {
@@ -77,7 +116,9 @@ export const EventsCalendar = () => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 500, width: '100%', maxWidth: 800 }}
+                onSelectEvent={handleSelectEvent}
             />
+            <EventDetails event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 
             {session && (
                 <div className="mt-8">

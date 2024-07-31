@@ -51,11 +51,11 @@ const CourseDetails = () => {
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Skills</h3>
-                <ul className="space-y-1 text-sm text-gray-600">
+                {/* <ul className="space-y-1 text-sm text-gray-600">
                                 {course.skills && course.skills.map((skill, index) => (
                                     <li key={index}>{skill}</li>
                                 ))}
-                            </ul>
+                            </ul> */}
               </div>
             </div>
           </div>

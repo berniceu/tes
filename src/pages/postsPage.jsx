@@ -28,6 +28,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 const PostCard = ({ post }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [postDetails, setPostDetails] = useState(null);
+  const [newComment, setNewComment] = useState('');
 
   const fetchPostDetails = async (id) => {
     try {
@@ -46,6 +47,25 @@ const PostCard = ({ post }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setPostDetails(null);
+    setNewComment('');
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await axios.post(`${BASE_URL}/dashboard/posts/new_comment/`, {
+        content: newComment
+      });
+      setPostDetails({
+        ...postDetails,
+        comments: [...postDetails.comments, response.data]
+      });
+      setNewComment('');
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
   };
 
   return (
@@ -54,52 +74,74 @@ const PostCard = ({ post }) => {
         className="p-4 rounded-lg hover:shadow hover:cursor-pointer"
         onClick={handleCardClick}
       >
-        <h3 className="font-bold mb-2">{post.name}</h3>
-        <p className="text-sm text-gray-600 mb-4">{post.content.substring(0, 100)}...</p>
+        <h3 className="font-bold mb-2">{post.name || 'Untitled Post'}</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          {post.content ? `${post.content.substring(0, 100)}...` : 'No content available'}
+        </p>
         <div className="flex justify-between text-sm text-gray-500">
           <div className="flex items-center">
             <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
               <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"/>
             </svg>
-            {new Date(post.created_at).toLocaleDateString()}
+            {post.created_at ? new Date(post.created_at).toLocaleDateString() : 'Date unknown'}
           </div>
           <div className="flex items-center">
             <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
               <path d="M12 6c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z"/>
             </svg>
-            {post.comments ? post.comments.length : 0} comments
+            {post.comments ? `${post.comments.length} comments` : '0 comments'}
           </div>
         </div>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-  {postDetails ? (
-    <>
-      <h2 className="text-2xl font-bold mb-4">{postDetails.name}</h2>
-      <p className="text-gray-700 mb-4">{postDetails.content}</p>
-      <div className="text-sm text-gray-500">
-        <div className="flex items-center mb-2">
-          <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
-            <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"/>
-          </svg>
-          {new Date(postDetails.created_at).toLocaleDateString()}
-        </div>
-        <div className="flex items-center">
-          <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
-            <path d="M12 6c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z"/>
-          </svg>
-          {postDetails.comments ? postDetails.comments.length : 0} comments
-        </div>
-      </div>
-    </>
-  ) : (
-    <div>Loading...</div>
-  )}
-</Modal>
+        {postDetails ? (
+          <>
+            <h2 className="text-2xl font-bold mb-4">{postDetails.name}</h2>
+            <p className="text-gray-700 mb-4">{postDetails.content}</p>
+            <div className="text-sm text-gray-500 mb-4">
+              <div className="flex items-center mb-2">
+                <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                  <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"/>
+                </svg>
+                {new Date(postDetails.created_at).toLocaleDateString()}
+              </div>
+            </div>
+            <div className="mb-4">
+              <h3 className="text-lg font-bold mb-2">Comments</h3>
+              {postDetails.comments && postDetails.comments.length > 0 ? (
+                postDetails.comments.map((comment, index) => (
+                  <div key={index} className="mb-2 p-2 bg-gray-100 rounded">
+                    <p>{comment.content}</p>
+                    <small className="text-gray-500">
+                      {new Date(comment.created_at).toLocaleString()}
+                    </small>
+                  </div>
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
+            </div>
+            <form onSubmit={handleCommentSubmit} className="mt-4">
+              <textarea
+                className="w-full p-2 border rounded mb-2"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                required
+              />
+              <button type="submit" className="px-4 py-2 bg-primary text-white rounded">
+                Post Comment
+              </button>
+            </form>
+          </>
+        ) : (
+          <div>Loading...</div>
+        )}
+      </Modal>
     </>
   );
 };
