@@ -247,6 +247,7 @@ const PostsGrid = () => {
       setNewPost({ name: '', content: '' });
       setIsModalOpen(false);
       toast.success('Post added successfully!')
+      window.location.reload()
     } catch (error) {
       console.error('Error adding post:', error.response ? error.response.data : error);
       setError(error.message);
