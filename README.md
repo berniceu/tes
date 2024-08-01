@@ -28,13 +28,12 @@ An interactive e-learning platform built with React, providing courses, events c
 In the project directory, you can run:
 
  ```bash
+    # install all necessary packages
     npm install
-    ```
-This installs all necessary packages
 
- ```bash
-    pip install -r requirements.txt
-    ```
+    # run the application
+    npm start
+ ```
 
 This runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
