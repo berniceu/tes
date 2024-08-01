@@ -39,7 +39,7 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg">
+        <div className="bg-white p-6 rounded-lg max-w-md w-full max-h-90vh overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">Add New Course</h2>
             <form onSubmit={onSubmit}>
                 <input
@@ -72,12 +72,40 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
                     <option value="advanced">Advanced</option>
                 </select>
                 <input
-                    className="w-full mb-2 p-2 border rounded"
-                    type="number"
-                    placeholder="Course Hours"
-                    value={newCourse.hours}
-                    onChange={(e) => setNewCourse({...newCourse, hours: parseInt(e.target.value)})}
-                />
+    className="w-full mb-2 p-2 border rounded"
+    type="number"
+    placeholder="Course Duration (in hours)"
+    value={newCourse.hours}
+    onChange={(e) => setNewCourse({...newCourse, hours: e.target.value})}
+/>
+<input
+    className="w-full mb-2 p-2 border rounded"
+    type="number"
+    placeholder="Number of Lessons"
+    value={newCourse.lessons}
+    onChange={(e) => setNewCourse({...newCourse, lessons: e.target.value})}
+/>
+<input
+    className="w-full mb-2 p-2 border rounded"
+    type="number"
+    placeholder="Number of Exercises"
+    value={newCourse.exercises}
+    onChange={(e) => setNewCourse({...newCourse, exercises: e.target.value})}
+/>
+<input
+    className="w-full mb-2 p-2 border rounded"
+    type="number"
+    placeholder="Number of Projects"
+    value={newCourse.projects}
+    onChange={(e) => setNewCourse({...newCourse, projects: e.target.value})}
+/>
+<input
+    className="w-full mb-2 p-2 border rounded"
+    type="text"
+    placeholder="Skills"
+    value={newCourse.skills}
+    onChange={(e) => setNewCourse({...newCourse, skills: e.target.value})}
+/>
                 <div className="flex justify-end">
                     <button type="button" onClick={onClose} className="mr-2 px-4 py-2 bg-gray-200 rounded">Cancel</button>
                     <button type="submit" className="px-4 py-2 bg-primary text-white rounded">Add Course</button>
@@ -91,7 +119,17 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [newCourse, setNewCourse] = useState({ name: '', description: '', source_link: '', level: 'beginner', hours: 0 });
+    const [newCourse, setNewCourse] = useState({
+      name: '',
+      description: '',
+      source_link: '',
+      level: 'beginner',
+      hours: 0,
+      lessons: 0,
+      exercises: 0,
+      projects: 0,
+      skills: []
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const userRole = localStorage.getItem('role')
 
@@ -120,16 +158,35 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
     const handleAddCourse = async (e) => {
       e.preventDefault();
       try {
-          const res = await axios.post(`${BASE_URL}/dashboard/posts/new_course`, newCourse);
-          setCourses(prevCourses => Array.isArray(prevCourses) ? [...prevCourses, res.data] : [res.data]);
-          setNewCourse({ title: '', description: '' });
-          setIsModalOpen(false);
-          toast.success('Course added successfully');
+        const courseData = {
+          ...newCourse,
+          hours: newCourse.hours ? parseInt(newCourse.hours) : 0,
+          lessons: newCourse.lessons ? parseInt(newCourse.lessons) : 0,
+          exercises: newCourse.exercises ? parseInt(newCourse.exercises) : 0,
+          projects: newCourse.projects ? parseInt(newCourse.projects) : 0,
+        };
+        const res = await axios.post(`${BASE_URL}/dashboard/courses/new_course/`, courseData);
+        setCourses(prevCourses => Array.isArray(prevCourses) ? [...prevCourses, res.data] : [res.data]);
+        setNewCourse({
+          name: '',
+          description: '',
+          source_link: '',
+          level: 'beginner',
+          hours: '',
+          lessons: '',
+          exercises: '',
+          projects: '',
+          skills: []
+        });
+        setIsModalOpen(false);
+        toast.success('Course added successfully');
+        window.location.reload();
       } catch (error) {
-          setError(error.message);
-          toast.error('Failed to add course');
+        setError(error.message);
+        toast.error('Failed to add course');
+        console.error("Error response:", error.response.data);
       }
-  };
+    };
   return (
     <div className="container mx-auto p-10 font-outfit min-h-screen">
       <div className="flex justify-between items-center mb-6">

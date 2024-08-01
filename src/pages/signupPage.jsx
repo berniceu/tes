@@ -29,7 +29,7 @@ const SignupPage = () => {
         full_name: fullName,
       });
 
-      toast.success("Signup successful");
+      toast.success("Login successful!", { autoClose: 3000 });
       console.log(res.data);
       navigate("/login");
     } catch (error) {
