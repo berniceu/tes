@@ -136,7 +136,7 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
     useEffect(() => {
         const fetchCourses = async () => {
           try {
-            const res = await axios.get(`${BASE_URL}/dashboard/courses/`);
+            const res = await axios.get(`${BASE_URL}/api/dashboard/courses/`);
             console.log('Fetched courses:', res.data);
             if (res.data.courses && Array.isArray(res.data.courses)) {
                 setCourses(res.data.courses);
@@ -165,7 +165,7 @@ const CourseModal = ({ isOpen, onClose, onSubmit, newCourse, setNewCourse}) => {
           exercises: newCourse.exercises ? parseInt(newCourse.exercises) : 0,
           projects: newCourse.projects ? parseInt(newCourse.projects) : 0,
         };
-        const res = await axios.post(`${BASE_URL}/dashboard/courses/new_course/`, courseData);
+        const res = await axios.post(`${BASE_URL}/api/dashboard/courses/new_course/`, courseData);
         setCourses(prevCourses => Array.isArray(prevCourses) ? [...prevCourses, res.data] : [res.data]);
         setNewCourse({
           name: '',

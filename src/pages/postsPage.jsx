@@ -32,7 +32,7 @@ const PostCard = ({ post, updatePost }) => {
 
   const fetchComments = async (postId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/dashboard/posts/${postId}/comments/`);
+      const response = await axios.get(`${BASE_URL}/api/dashboard/posts/${postId}/comments/`);
       console.log('comments', response.data)
       return response.data || [];
     } catch (error) {
@@ -242,7 +242,7 @@ const PostsGrid = () => {
         name: newPost.name,
         content: newPost.content,
       };
-      const res = await axios.post(`${BASE_URL}/dashboard/posts/new_post/`, postData);
+      const res = await axios.post(`${BASE_URL}/api/dashboard/posts/new_post/`, postData);
       setPosts(prevPosts => Array.isArray(prevPosts) ? [...prevPosts, res.data] : [res.data]);
       setNewPost({ name: '', content: '' });
       setIsModalOpen(false);

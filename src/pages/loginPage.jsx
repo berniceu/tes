@@ -14,7 +14,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/auth/login/`, {
+      const res = await axios.post(`${BASE_URL}/api/auth/login/`, {
         username: email,
         password,
       });
