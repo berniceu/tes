@@ -40,7 +40,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Hosted Version
 
-The hosted version of the e-learning platform can be accessed at: [tes-frontend](tes-ten-rho.vercel.app)
+The hosted version of the e-learning platform can be accessed at: [tes-frontend](https://tes-ten-rho.vercel.app/)
 The hosted the backend can be accessed at: [tes-backend](https://tes-backend.onrender.com/api)
 
 
